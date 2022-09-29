@@ -29,4 +29,4 @@ jobs:
         repository: GitHub-Nexus
         coordinates: groupId=com.example artifactId=app version=1.0.0
         assets: extension=jar
-        filename: target/springboot-welcome.jar
+        filename: target/cz-springboot-welcome.jar
