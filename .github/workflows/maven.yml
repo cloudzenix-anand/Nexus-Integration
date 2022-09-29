@@ -1,125 +1,28 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+name: Java with Nexus Repository
 
-name: project cicd flow 
-
-on:
-  push:
-    branches: [ master ] 
-  pull_request:
-    branches: [ master ] 
+on: [push]
 
 jobs:
-  Sonar-Scan:
+  build:
+
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Source code Analysis with SonarCloud         
-
-        # You can pin the exact commit or the version.
-        # uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
-        uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
-        with:
-          # Additional arguments for the sonarcloud scanner
-          args:             
-            # Unique keys of your project and organization. You can find them in SonarCloud > Information (bottom-left menu)
-            # mandatory
-            -Dsonar.projectKey=cloudzenix-anand_github-actions-Multi-Jobs-trial
-            -Dsonar.organization=cloudzenix-anand
-  build-code: 
-  
-    runs-on: ubuntu-latest 
-    needs: [Sonar-Scan]
-
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
-        java-version: '1.8'
-        distribution: 'adopt'
-        cache: maven
-    - name: Build source code into jar file with Maven
-      run: |
-           mvn -B package --file pom.xml
-           mkdir artifacts && cp target/*.jar artifacts
-           cd artifacts && ls
-    - name: Saving the artifact 
-      uses: actions/upload-artifact@v2
+        java-version: 1.8
+    - name: Build with Maven
+      run: mvn package --file pom.xml
+    - name: Nexus Repo Publish
+      uses: sonatype-nexus-community/nexus-repo-github-action@master
       with:
-        name: Springboot artifact
-        path: artifacts
-        
-  Pushing-Artifact-to-Jfrog_Repo:
-    name: Pushing-Artifact-to-Jfrog_Repo
-    runs-on: ubuntu-latest
-    needs: [build-code]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: Springboot artifact
-      - run: ls
-          
-      - name: Setting up Jfrog-CLI
-        uses: jfrog/setup-jfrog-cli@v2
-      #run: jf --version
-      - name: Pushing the built artifact to Jfrog repository
-        run: jf rt upload cz-springboot-welcome.jar maven-demo --url=https://cloudzenix.jfrog.io/artifactory/ --user=renuka.prasad@cloudzenix.com --password=Prasad@123
-      #run: jf rt upload artifacts/cz-springboot-welcome.jar maven-demo --url=cloudzenix.jfrog.io --user=renuka.prasad@cloudzenix.com --password=Prasad@123
-  
-  Build-Docker_image_and_Push_to_Jfrog: 
-  
-    name: Build-Docker_image_and_Push_to_Jfrog
-    runs-on: ubuntu-latest
-    needs: [Pushing-Artifact-to-Jfrog_Repo]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: Springboot artifact
-      - run: |
-           mkdir target && cp *.jar target
-           cd target && ls
- 
-      - name: Build & Push Docker image to JFrog-Artifact repo
-        run: |
-          docker login -urenuka.prasad@cloudzenix.com -p Prasad@123 cloudzenix.jfrog.io
-          docker build -t cloudzenix.jfrog.io/docker-repo/cz-springboot-welcome:latest .
-          docker push cloudzenix.jfrog.io/docker-repo/cz-springboot-welcome:latest
-
-  Build-Docker_image_and_Push_to_DockerHub: 
-  
- 
-    name: Build-Docker_image_and_Push_to_DockerHub
-    runs-on: ubuntu-latest
-    needs: [Build-Docker_image_and_Push_to_Jfrog]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: Springboot artifact
-      - run: |
-           mkdir target && cp *.jar target
-           cd target && ls
-   
-      - name: Build & push Docker image to Docker-Hub          
-        uses: mr-smithers-excellent/docker-build-push@v5
-        with:
-          image: cloudzenix/cz-springboot-welcome
-          tags: latest
-          registry: docker.io
-          dockerfile: Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }} 
-          password: ${{ secrets.DOCKER_PASSWORD }} 
-    
-
-
-     
+        serverUrl: https://nexus.cloudzenix.online/
+        username: admin
+        password: CloudZenix
+        format: maven2
+        repository: GitHub-Nexus
+        coordinates: groupId=com.example artifactId=app version=1.0.0
+        assets: extension=jar
+        filename: ./target/app-1.0.0.jar
