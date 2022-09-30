@@ -33,9 +33,9 @@ jobs:
     - uses: mr-smithers-excellent/docker-build-push@v5
       name: Build & push Docker image
       with:
-        image: GitHub-Docker-Registry/cz-springboot-welcome
+        image: docker-private-repo/cz-springboot-welcome
         tags: latest
-        registry: nexus.cloudzenix.online
+        registry: 10.0.43.67:8084
         dockerfile: Dockerfile
         username: admin
         password: CloudZenix
