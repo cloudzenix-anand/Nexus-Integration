@@ -8,11 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
     - name: Check out code
-
-    - uses: mr-smithers-excellent/docker-build-push@v5
+    - uses: actions/checkout@v2
     - name: Build & push Docker image
+    - uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: GitHub-Docker-Registry/cz-springboot-welcome
         tags: latest
@@ -20,4 +19,26 @@ jobs:
         dockerfile: Dockerfile
         username: admin
         password: CloudZenix
-
+    #    steps:
+    - uses: actions/checkout@v1
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Build with Maven
+      run: mvn package --file pom.xml
+    - name: listing jar file
+      run: |
+           ls -la
+           cd target && ls -la
+    - name: Nexus Repo Publish
+      uses: sonatype-nexus-community/nexus-repo-github-action@master
+      with:
+        serverUrl: https://nexus.cloudzenix.online/
+        username: admin
+        password: CloudZenix
+        format: maven2
+        repository: GitHub-Nexus
+        coordinates: groupId=com.example artifactId=app version=1.0.0
+        assets: extension=jar
+        filename: target/cz-springboot-welcome.jar  
