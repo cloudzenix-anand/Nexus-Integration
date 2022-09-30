@@ -35,7 +35,7 @@ jobs:
       with:
         image: docker-private-repo/cz-springboot-welcome
         tags: latest
-        registry: 10.0.43.67:8084
+        registry: nexus.cloudzenix.online
         dockerfile: Dockerfile
         username: admin
         password: CloudZenix
