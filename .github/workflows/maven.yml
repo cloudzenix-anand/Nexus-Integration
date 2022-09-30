@@ -14,12 +14,12 @@ jobs:
     - uses: mr-smithers-excellent/docker-build-push@v5
     - name: Build & push Docker image
       with:
-        image: repo/image
-        tags: v1, latest
-        registry: registry-url.io
-        dockerfile: Dockerfile.ci
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        image: GitHub-Docker-Registry/cz-springboot-welcome
+        tags: latest
+        registry: nexus.cloudzenix.online
+        dockerfile: Dockerfile
+        username: admin
+        password: CloudZenix
 #    steps:
     - uses: actions/checkout@v1
     - name: Set up JDK 1.8
