@@ -33,7 +33,7 @@ jobs:
         
     - name: push docker image to nexus
       run: |
-           docker login -u admin -p CloudZenix 10.0.43.67:8084
+           docker login -u admin -p CloudZenix ip-10-0-43-67.ec2.internal:8084
            docker build -t cz-springboot-welcome
            docker tag cz-springboot-welcome:latest 10.0.43.67:8084/repository/docker-private-repo:latest
            docker push 10.0.43.67:8084/repository/docker-private-repo:latest
