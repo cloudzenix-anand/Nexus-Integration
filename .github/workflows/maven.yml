@@ -30,12 +30,19 @@ jobs:
         coordinates: groupId=com.example artifactId=app version=1.0.0
         assets: extension=jar
         filename: target/cz-springboot-welcome.jar
-    - uses: mr-smithers-excellent/docker-build-push@v5
-      name: Build & push Docker image
-      with:
-        image: docker-private-repo/cz-springboot-welcome
-        tags: latest
-        registry: nexus.cloudzenix.online
-        dockerfile: Dockerfile
-        username: admin
-        password: CloudZenix
+        
+    - name: push docker image to nexus
+      run: |
+           docker login -u admin -p CloudZenix 10.0.43.67:8084
+           docker build -t cz-springboot-welcome
+           docker tag cz-springboot-welcome:latest 10.0.43.67:8084/repository/docker-private-repo:latest
+           docker push 10.0.43.67:8084/repository/docker-private-repo:latest
+#    - uses: mr-smithers-excellent/docker-build-push@v5
+#      name: Build & push Docker image
+#      with:
+##        image: docker-private-repo/cz-springboot-welcome
+ #       tags: latest
+#        registry: nexus.cloudzenix.online
+#        dockerfile: Dockerfile
+#        username: admin
+#        password: CloudZenix
