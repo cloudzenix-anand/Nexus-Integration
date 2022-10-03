@@ -33,10 +33,10 @@ jobs:
         
     - name: push docker image to nexus
       run: |
-           docker login -u admin -p CloudZenix ip-10-0-43-67.ec2.internal:8084
-           docker build -t cz-springboot-welcome
-           docker tag cz-springboot-welcome:latest 10.0.43.67:8084/repository/docker-private-repo:latest
-           docker push 10.0.43.67:8084/repository/docker-private-repo:latest
+           docker login sudo docker login -u admin -p nexus ec2-44-192-120-3.compute-1.amazonaws.com:8086
+           docker build -t /cz-springboot-welcome
+           docker tag cz-springboot-welcome:latest ec2-44-192-120-3.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
+           docker push ec2-44-192-120-3.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
 #    - uses: mr-smithers-excellent/docker-build-push@v5
 #      name: Build & push Docker image
 #      with:
