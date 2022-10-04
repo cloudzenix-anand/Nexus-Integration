@@ -26,7 +26,7 @@ jobs:
         username: admin
         password: nexus
         format: maven2
-        repository: github-action-docker
+        repository: github-action-maven
         coordinates: groupId=com.example artifactId=app version=1.0.0
         assets: extension=jar
         filename: target/cz-springboot-welcome.jar
