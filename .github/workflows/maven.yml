@@ -1,9 +1,9 @@
-name: Java with Nexus Repository 
+name: Nexus Repository 
 
 on: [push]
 
 jobs:
-  build:
+  push-to-Nexus:
 
     runs-on: ubuntu-latest
 
@@ -22,7 +22,7 @@ jobs:
     - name: Nexus Repo Publish
       uses: sonatype-nexus-community/nexus-repo-github-action@master
       with:
-        serverUrl: http://ec2-44-192-85-226.compute-1.amazonaws:8081/
+        serverUrl: http://ec2-44-192-85-226.compute-1.amazonaws.com:8081
         username: admin
         password: nexus
         format: maven2
