@@ -1,0 +1,3 @@
+{
+    "insecure-registries" : ["ec2-44-192-85-226.compute-1.amazonaws.com:8086"]
+}
