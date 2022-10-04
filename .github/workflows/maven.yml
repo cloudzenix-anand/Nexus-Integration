@@ -22,7 +22,7 @@ jobs:
     - name: Nexus Repo Publish
       uses: sonatype-nexus-community/nexus-repo-github-action@master
       with:
-        serverUrl: http://ec2-44-192-120-3.compute-1.amazonaws.com:8081/
+        serverUrl: http://ec2-44-192-85-226.compute-1.amazonaws:8081/
         username: admin
         password: nexus
         format: maven2
@@ -33,10 +33,18 @@ jobs:
         
     - name: push docker image to nexus
       run: |
-           docker login sudo docker login -u admin -p nexus ec2-44-192-120-3.compute-1.amazonaws.com:8086
-           docker build -t /cz-springboot-welcome
-           docker tag cz-springboot-welcome:latest ec2-44-192-120-3.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
-           docker push ec2-44-192-120-3.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
+           ls -la 
+            sudo mv daemon.json /etc/docker/daemon.json
+            sudo systemctl restart docker
+            sudo systemctl status docker
+            sudo docker login -u admin -p nexus ec2-44-192-85-226.compute-1.amazonaws.com:8086
+            sudo docker build -t ec2-44-192-85-226.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest .
+            sudo docker images
+            sudo docker push ec2-44-192-85-226.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
+        #   docker login sudo docker login -u admin -p nexus ec2-44-192-120-3.compute-1.amazonaws.com:8086
+        #   docker build -t /cz-springboot-welcome
+        #   docker tag cz-springboot-welcome:latest ec2-44-192-120-3.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
+        #   docker push ec2-44-192-120-3.compute-1.amazonaws.com:8086/cz-springboot-welcome:latest
 #    - uses: mr-smithers-excellent/docker-build-push@v5
 #      name: Build & push Docker image
 #      with:
